@@ -8,17 +8,17 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UpgradeController;
 use App\Http\Controllers\ChipController;
+use App\Http\Controllers\WelcomeController;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
 
+Route::get('/', [WelcomeController::class, 'index'])->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    // Route::get('dashboard', function () {
+    //     return Inertia::render('dashboard');
+    // })->name('dashboard');
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    Route::resource('/dashboard', App\Http\Controllers\DashboardController::class);
 
     // Cards Management
     Route::resource('cards', CardController::class);
@@ -51,6 +51,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('send', [CardController::class, 'sendWhatsappMessage'])->name('send');
 
 });
+
+// Add this route outside the auth middleware group
+Route::post('/search-card', [WelcomeController::class, 'searchCard'])->name('search.card');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

@@ -14,8 +14,7 @@ class CardTemplateController extends Controller
         $templates = CardTemplate::with('rewards')->paginate(10);
 
         return Inertia::render('Templates/Index', [
-            'templates' => $templates,
-            'hasActiveSubscription' => auth()->user()->hasActiveSubscription()
+            'templates' => $templates
         ]);
     }
 

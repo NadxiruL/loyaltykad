@@ -53,11 +53,14 @@ class CardController extends Controller
 
         DB::transaction(function () use ($validated, $request) {
             // Find or create customer with is_existing_customer defaulting to false
+            // Now using firstOrCreate with both phone and user_id as the unique identifier
             $customer = Customer::firstOrCreate(
-                ['phone' => $validated['phone']],
+                [
+                    'phone' => $validated['phone'],
+                    'user_id' => auth()->id()
+                ],
                 [
                     'name' => $validated['name'],
-                    'user_id' => auth()->id(),
                     'is_existing_customer' => $request->boolean('is_existing_customer', false)
                 ]
             );

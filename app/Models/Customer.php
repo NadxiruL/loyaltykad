@@ -25,8 +25,14 @@ class Customer extends Model
         return $this->hasMany(CustomerCard::class);
     }
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Add a unique index on phone and user_id
+    public function uniqueIds()
+    {
+        return ['phone', 'user_id'];
     }
 }

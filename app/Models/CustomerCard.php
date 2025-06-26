@@ -22,7 +22,9 @@ class CustomerCard extends Model
 
     protected $casts = [
         'completed' => 'boolean',
-        'current_stamps' => 'integer'
+        'current_stamps' => 'integer',
+        'start_date' => 'date',
+        'expiry_date' => 'date'
     ];
 
     protected static function booted(): void
@@ -47,7 +49,7 @@ class CustomerCard extends Model
 
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, foreignKey: 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function rewards(): HasManyThrough

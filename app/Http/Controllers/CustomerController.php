@@ -39,6 +39,10 @@ class CustomerController extends Controller
         ]);
     }
 
+    public function create() {
+
+    }
+
     public function show(Customer $customer)
     {
         $customer->load(['cards.template', 'cards.stampHistory', 'cards.rewards']);
@@ -66,5 +70,22 @@ class CustomerController extends Controller
                 ])
             ]
         ]);
+    }
+
+    public function store(){
+
+    }
+
+    public function edit(){
+
+    }
+
+    public function update(){
+
+    }
+
+    public function destroy()
+    {
+
     }
 }

@@ -17,24 +17,23 @@ class PackageSeeder extends Seeder
                 'duration' => 30,
                 'description' => 'Basic loyalty membership with essential benefits.',
                 'features' => json_encode([
-                    '10% cashback',
-                    'Standard shipping',
+                    '1500 Customer',
                     'Basic offers',
                     'Standard support',
                 ]),
             ],
-            // [
-            //     'name' => 'Premium Package',
-            //     'price' => 19.99,
-            //     'duration' => 30,
-            //     'description' => 'Enhanced loyalty membership with additional benefits.',
-            //     'features' => json_encode([
-            //         '20% cashback',
-            //         'Free shipping',
-            //         'Exclusive offers',
-            //         'Priority support',
-            //     ]),
-            // ],
+            [
+                'name' => 'Premium Package',
+                'price' => 49.99,
+                'duration' => 30,
+                'description' => 'Enhanced loyalty membership with additional benefits.',
+                'features' => json_encode([
+                    'Whatsapp Notification',
+                    'Unlimited Customer',
+                    'Exclusive offers',
+                    'Priority support',
+                ]),
+            ],
             // [
             //     'name' => 'Platinum Package',
             //     'price' => 29.99,

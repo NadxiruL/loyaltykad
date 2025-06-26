@@ -30,6 +30,118 @@ interface Props {
     };
 }
 
+// Move component outside to prevent recreation on each render
+const PhoneNumberInput = ({
+    isExistingCustomer,
+    setIsExistingCustomer,
+    data,
+    setData,
+    customers,
+    errors
+}: {
+    isExistingCustomer: boolean;
+    setIsExistingCustomer: (value: boolean) => void;
+    data: any;
+    setData: any;
+    customers: Props['customers'];
+    errors: any;
+}) => (
+    <div className="space-y-4">
+        <div className="flex items-center justify-between">
+            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+            <Switch.Group>
+                <div className="flex items-center">
+                    <Switch.Label className="mr-3 text-sm text-gray-600">Existing Customer</Switch.Label>
+                    <Switch
+                        checked={isExistingCustomer}
+                        onChange={(checked) => {
+                            setIsExistingCustomer(checked);
+                            if (!checked) {
+                                setData((data: any) => ({
+                                    ...data,
+                                    phone: '',
+                                    name: '',
+                                }));
+                            }
+                        }}
+                        className={`${
+                            isExistingCustomer ? 'bg-primary' : 'bg-gray-200'
+                        } focus:ring-primary relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none`}
+                    >
+                        <span
+                            className={`${
+                                isExistingCustomer ? 'translate-x-6' : 'translate-x-1'
+                            } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                        />
+                    </Switch>
+                </div>
+            </Switch.Group>
+        </div>
+
+        {isExistingCustomer ? (
+            <select
+                value={data.phone}
+                onChange={(e) => {
+                    const selectedCustomer = customers.find((c) => c.phone === e.target.value);
+                    setData((data: any) => ({
+                        ...data,
+                        phone: e.target.value,
+                        name: selectedCustomer?.name || '',
+                    }));
+                }}
+                className={`w-full rounded-lg border px-4 py-2 ${
+                    errors.phone ? 'border-red-500' : 'border-gray-300'
+                } focus:ring-primary focus:border-transparent focus:ring-2 focus:outline-none`}
+                required
+            >
+                <option value="">Select existing customer</option>
+                {customers.map((customer) => (
+                    <option key={customer.id} value={customer.phone}>
+                        {customer.phone} - {customer.name}
+                    </option>
+                ))}
+            </select>
+        ) : (
+            <div className="space-y-4">
+                <input
+                    type="tel"
+                    value={data.phone}
+                    onChange={(e) =>
+                        setData((data: any) => ({
+                            ...data,
+                            phone: e.target.value,
+                        }))
+                    }
+                    placeholder="Enter phone number"
+                    className={`w-full rounded-lg border px-4 py-2 ${
+                        errors.phone ? 'border-red-500' : 'border-gray-300'
+                    } focus:ring-primary focus:border-transparent focus:ring-2 focus:outline-none`}
+                    required
+                />
+                <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">Customer Name</label>
+                    <input
+                        type="text"
+                        value={data.name}
+                        onChange={(e) =>
+                            setData((data: any) => ({
+                                ...data,
+                                name: e.target.value,
+                            }))
+                        }
+                        placeholder="Enter customer name"
+                        className={`w-full rounded-lg border px-4 py-2 ${
+                            errors.name ? 'border-red-500' : 'border-gray-300'
+                        } focus:ring-primary focus:border-transparent focus:ring-2 focus:outline-none`}
+                        required
+                    />
+                </div>
+            </div>
+        )}
+        {errors.phone && <div className="mt-1 text-sm text-red-600">{errors.phone}</div>}
+    </div>
+);
+
 export default function Create({ templates, customers, card }: Props) {
     const isEditing = !!card;
     const today = new Date().toISOString().split('T')[0];
@@ -86,137 +198,6 @@ export default function Create({ templates, customers, card }: Props) {
         }
     };
 
-    const handlePhoneChange = (phone: string) => {
-        if (phone === 'new') {
-            setIsExistingCustomer(true);
-            setData((data) => ({
-                ...data,
-                phone: '',
-                name: '',
-            }));
-        } else {
-            setIsExistingCustomer(false);
-            const selectedCustomer = customers.find((c) => c.phone === phone);
-            setData((data) => ({
-                ...data,
-                phone: phone,
-                name: selectedCustomer ? selectedCustomer.name : '',
-            }));
-        }
-    };
-
-    const handleNewPhoneInput = (value: string) => {
-        setData((data) => ({
-            ...data,
-            phone: value,
-        }));
-    };
-
-    const filteredCustomers =
-        query === ''
-            ? customers
-            : customers.filter((customer) => {
-                  const searchStr = `${customer.phone} ${customer.name}`.toLowerCase();
-                  return searchStr.includes(query.toLowerCase());
-              });
-
-    const PhoneNumberInput = () => (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-                <Switch.Group>
-                    <div className="flex items-center">
-                        <Switch.Label className="mr-3 text-sm text-gray-600">Existing Customer</Switch.Label>
-                        <Switch
-                            checked={isExistingCustomer}
-                            onChange={(checked) => {
-                                setIsExistingCustomer(checked);
-                                if (!checked) {
-                                    setData((data) => ({
-                                        ...data,
-                                        phone: '',
-                                        name: '',
-                                    }));
-                                }
-                            }}
-                            className={`${
-                                isExistingCustomer ? 'bg-primary' : 'bg-gray-200'
-                            } focus:ring-primary relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none`}
-                        >
-                            <span
-                                className={`${
-                                    isExistingCustomer ? 'translate-x-6' : 'translate-x-1'
-                                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-                            />
-                        </Switch>
-                    </div>
-                </Switch.Group>
-            </div>
-
-            {isExistingCustomer ? (
-                <select
-                    value={data.phone}
-                    onChange={(e) => {
-                        const selectedCustomer = customers.find((c) => c.phone === e.target.value);
-                        setData((data) => ({
-                            ...data,
-                            phone: e.target.value,
-                            name: selectedCustomer?.name || '',
-                        }));
-                    }}
-                    className={`w-full rounded-lg border px-4 py-2 ${
-                        errors.phone ? 'border-red-500' : 'border-gray-300'
-                    } focus:ring-primary focus:border-transparent focus:ring-2 focus:outline-none`}
-                    required
-                >
-                    <option value="">Select existing customer</option>
-                    {customers.map((customer) => (
-                        <option key={customer.id} value={customer.phone}>
-                            {customer.phone} - {customer.name}
-                        </option>
-                    ))}
-                </select>
-            ) : (
-                <div className="space-y-4">
-                    <input
-                        type="tel"
-                        value={data.phone}
-                        onChange={(e) =>
-                            setData((data) => ({
-                                ...data,
-                                phone: e.target.value,
-                            }))
-                        }
-                        placeholder="Enter phone number"
-                        className={`w-full rounded-lg border px-4 py-2 ${
-                            errors.phone ? 'border-red-500' : 'border-gray-300'
-                        } focus:ring-primary focus:border-transparent focus:ring-2 focus:outline-none`}
-                        required
-                    />
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Customer Name</label>
-                        <input
-                            type="text"
-                            value={data.name}
-                            onChange={(e) =>
-                                setData((data) => ({
-                                    ...data,
-                                    name: e.target.value,
-                                }))
-                            }
-                            placeholder="Enter customer name"
-                            className={`w-full rounded-lg border px-4 py-2 ${
-                                errors.name ? 'border-red-500' : 'border-gray-300'
-                            } focus:ring-primary focus:border-transparent focus:ring-2 focus:outline-none`}
-                            required
-                        />
-                    </div>
-                </div>
-            )}
-            {errors.phone && <div className="mt-1 text-sm text-red-600">{errors.phone}</div>}
-        </div>
-    );
-
     return (
         <AppLayout>
             <Head title={`${isEditing ? 'Edit' : 'Create'} Loyalty Card`} />
@@ -229,7 +210,14 @@ export default function Create({ templates, customers, card }: Props) {
                     <div className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <PhoneNumberInput />
+                                <PhoneNumberInput
+                                    isExistingCustomer={isExistingCustomer}
+                                    setIsExistingCustomer={setIsExistingCustomer}
+                                    data={data}
+                                    setData={setData}
+                                    customers={customers}
+                                    errors={errors}
+                                />
                             </div>
 
                             <div>
@@ -299,8 +287,8 @@ export default function Create({ templates, customers, card }: Props) {
                                     className="bg-primary hover:bg-primary-dark w-full rounded-lg px-6 py-3 text-white transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
                                     disabled={!data.template_id || processing}
                                 >
-                                    {isEditing ? 'Update' : 'Create'} Card
-                                    {!isEditing && ' with First Stamp'}
+                                    {isEditing ? 'Update' : 'Create'}
+                                    {!isEditing}
                                 </button>
                             </div>
                         </form>

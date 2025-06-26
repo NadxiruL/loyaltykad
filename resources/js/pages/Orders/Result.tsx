@@ -27,7 +27,7 @@ export default function Result({ status, message }: Props) {
                         </div>
                     )}
                     <p className="mt-2 text-gray-600">{message}</p>
-                    <Link href={route('dashboard')} className="mt-6 inline-block rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                    <Link href={route('dashboard.index')} className="mt-6 inline-block rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
                         Go to Dashboard
                     </Link>
                 </div>
